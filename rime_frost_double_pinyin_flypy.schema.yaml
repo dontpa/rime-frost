@@ -14,7 +14,7 @@
 
 # 方案说明
 schema:
-  schema_id: double_pinyin_flypy
+  schema_id: rime_frost_double_pinyin_flypy
   name: 小鹤双拼
   version: "1"
   author:
@@ -49,7 +49,7 @@ switches:
 # 输入引擎
 engine:
   processors:
-    - lua_processor@select_character # 以词定字
+    - lua_processor@*select_character # 以词定字
     - ascii_composer
     - recognizer
     - key_binder
@@ -399,7 +399,7 @@ pin_cand_filter:
 # 主翻译器，拼音
 translator:
   dictionary: rime_frost # 挂载词库 rime_frost.dict.yaml
-  prism: double_pinyin_flypy # 多方案共用一个词库时，为避免冲突，需要用 prism 指定一个名字。
+  prism: rime_frost_double_pinyin_flypy # 多方案共用一个词库时，为避免冲突，需要用 prism 指定一个名字。
   spelling_hints: 8 # corrector.lua ：为了让错音错字提示的 Lua 同时适配全拼双拼，将拼音显示在 comment 中
   always_show_comments: true # corrector.lua ：Rime 默认在 preedit 等于 comment 时取消显示 comment，这里强制一直显示，供 corrector.lua 做判断用。
   initial_quality: 1.2 # 拼音的权重应该比英文大
@@ -530,7 +530,7 @@ recognizer:
 # 从 default 继承快捷键
 key_binder:
   import_preset: default # 从 default.yaml 继承通用的
-  search: "`" # 辅码引导符，要添加到 speller/alphabet
+  aux_code_trigger: "`" # 辅码引导符，要添加到 speller/alphabet
   # bindings:             # 也可以再增加方案专有的
 
 # 拼写设定
@@ -541,12 +541,6 @@ speller:
   initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA
   delimiter: " '" # 第一位<空格>是拼音之间的分隔符；第二位<'>表示可以手动输入单引号来分割拼音。
   algebra:
-    - derive/^([zcs])h/$1/ # z c s → zh ch sh
-    - derive/^([zcs])([^h])/$1h$2/ # zh ch sh → z c s
-    - derive/^l/n/ # n → l
-    - derive/^n/l/ # l → n
-    - derive/in/ing/
-    - derive/ing/in/
     - erase/^xx$/
     - derive/^([jqxy])u$/$1v/
     - derive/^([aoe])([ioun])$/$1$1$2/
